@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { urlFor } from '@/lib/sanity.image';
+import { resolveImageSrc } from '@/lib/sanity.image';
 
 interface ArticleCardProps {
   article: {
@@ -18,16 +18,12 @@ export default function ArticleCard({ article }: ArticleCardProps) {
   return (
     <Link href={`/articles/${article.slug.current}`} className="group block">
       <div className="relative overflow-hidden mb-6 aspect-[4/5] ink-border bg-surface-container">
-        {article.coverImage ? (
-          <Image
-            className="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-            src={urlFor(article.coverImage).width(800).url()}
-            alt={article.coverImage.alt || article.title}
-            fill
-          />
-        ) : (
-          <div className="w-full h-full bg-surface-container-high" />
-        )}
+        <Image
+          className="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+          src={resolveImageSrc(article.coverImage, 800)}
+          alt={article.coverImage?.alt || article.title}
+          fill
+        />
         <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors" />
       </div>
       <div className="space-y-3">

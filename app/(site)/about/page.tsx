@@ -1,4 +1,5 @@
 import { PortableText } from '@portabletext/react';
+import Logo from '@/components/Logo';
 import { getSiteSettings } from '@/lib/sanity.queries';
 
 export const revalidate = 60;
@@ -12,8 +13,8 @@ export default async function AboutPage() {
         <span className="text-secondary font-label-lg text-label-lg uppercase tracking-widest mb-2 block">
           About
         </span>
-        <h1 className="font-headline-lg text-headline-lg text-primary mb-10">
-          Clove &amp; Cauldron
+        <h1 className="mb-10">
+          <Logo variant="wordmark" alt="Clove & Cauldron" className="h-10 md:h-14 w-auto" />
         </h1>
 
         {settings?.aboutText ? (
@@ -35,7 +36,7 @@ export default async function AboutPage() {
           </p>
         )}
 
-        <div className="flex gap-4 mt-10">
+        <div className="flex flex-wrap gap-4 mt-10">
           {settings?.youtubeUrl && (
             <a
               href={settings.youtubeUrl}

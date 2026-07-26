@@ -89,7 +89,7 @@ app/
   studio/[[...tool]]/     — embedded Sanity Studio (the copy desk)
 components/               — shared React components
 lib/
-  fonts.ts                — your six fonts, loaded via next/font/local
+  fonts.ts                — Libre Caslon Text + Work Sans, loaded via next/font/google
   sanity.client.ts        — Sanity API client
   sanity.queries.ts       — GROQ queries for all content types
   sanity.image.ts         — image URL builder
@@ -98,23 +98,14 @@ sanity/
   structure/              — copy desk navigation layout
   sanity.config.ts        — Studio configuration
 public/
-  fonts/                  — your six font files
   logo/                   — logo variants (lockup, icon, wordmark)
 ```
 
 ## Fonts
 
-Six fonts are loaded locally (`lib/fonts.ts`) and mapped into the Tailwind
-config (`tailwind.config.ts`) under the original design's font-family tokens:
+Two Google Fonts are loaded (`lib/fonts.ts`) and mapped into the Tailwind
+config (`tailwind.config.ts`) under the original design's font-family tokens,
+matching the mockups exactly:
 
-- **Blacksword** → all headline sizes (display-lg, headline-lg/md/sm)
-- **Plain Black Wide** → body copy (body-lg, body-md)
-- **Jim Nightshade** → nav links and small uppercase labels (label-lg, label-sm)
-- **Perrygot**, **Homemade Apple**, **Butterfly Kids** → not wired into any
-  token yet; available as CSS variables (`--font-perrygot`,
-  `--font-homemade-apple`, `--font-butterfly-kids`) for future decorative use
-  (pull quotes, handwritten captions, special callouts)
-
-These role assignments are a starting point — swap any of them in
-`tailwind.config.ts` if a different pairing feels better once you see real
-content in place.
+- **Libre Caslon Text** → all headline sizes (display-lg, headline-lg/md/sm)
+- **Work Sans** → body copy and labels (body-lg, body-md, label-lg, label-sm)

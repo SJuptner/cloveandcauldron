@@ -2,7 +2,97 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Everything below is copied as-is from the supplied design file */
+/* M3-style color tokens as RGB triples so Tailwind's `rgb(var(...) / <alpha-value>)`
+   pattern keeps opacity modifiers (e.g. bg-primary/5) working. .dark overrides
+   flip the theme; *-fixed* tokens are intentionally omitted from .dark since
+   M3 "fixed" roles stay constant across themes. */
+:root {
+  --color-surface-container-low: 246 243 238;
+  --color-background: 252 249 244;
+  --color-inverse-primary: 200 198 197;
+  --color-on-primary-fixed-variant: 71 71 70;
+  --color-surface-container-highest: 229 226 221;
+  --color-on-secondary-fixed-variant: 134 34 1;
+  --color-tertiary-fixed: 140 245 228;
+  --color-on-secondary: 255 255 255;
+  --color-secondary-fixed: 255 219 209;
+  --color-on-error-container: 147 0 10;
+  --color-primary: 0 0 0;
+  --color-tertiary-container: 0 32 28;
+  --color-on-primary-container: 133 131 131;
+  --color-on-primary: 255 255 255;
+  --color-primary-fixed: 229 226 225;
+  --color-inverse-surface: 49 48 45;
+  --color-secondary-container: 254 121 82;
+  --color-on-background: 28 28 25;
+  --color-on-surface-variant: 68 71 72;
+  --color-tertiary-fixed-dim: 111 216 200;
+  --color-primary-container: 28 27 27;
+  --color-surface-container-high: 235 232 227;
+  --color-outline: 116 120 120;
+  --color-on-secondary-fixed: 59 9 0;
+  --color-on-tertiary: 255 255 255;
+  --color-on-secondary-container: 108 25 0;
+  --color-on-error: 255 255 255;
+  --color-error-container: 255 218 214;
+  --color-tertiary: 0 0 0;
+  --color-secondary: 167 57 24;
+  --color-inverse-on-surface: 243 240 235;
+  --color-on-surface: 28 28 25;
+  --color-surface-container: 240 237 232;
+  --color-outline-variant: 196 199 199;
+  --color-surface-container-lowest: 255 255 255;
+  --color-on-primary-fixed: 28 27 27;
+  --color-surface: 252 249 244;
+  --color-surface-dim: 220 218 213;
+  --color-error: 186 26 26;
+  --color-on-tertiary-fixed: 0 32 28;
+  --color-on-tertiary-fixed-variant: 0 80 72;
+  --color-surface-bright: 252 249 244;
+  --color-surface-tint: 95 94 94;
+  --color-secondary-fixed-dim: 255 181 160;
+  --color-surface-variant: 229 226 221;
+  --color-on-tertiary-container: 26 148 134;
+  --color-primary-fixed-dim: 200 198 197;
+}
+
+.dark {
+  --color-background: 22 21 18;
+  --color-surface: 22 21 18;
+  --color-surface-dim: 16 15 12;
+  --color-surface-bright: 58 56 51;
+  --color-surface-container-lowest: 16 15 12;
+  --color-surface-container-low: 30 28 24;
+  --color-surface-container: 34 31 27;
+  --color-surface-container-high: 44 41 37;
+  --color-surface-container-highest: 55 51 46;
+  --color-surface-variant: 72 69 63;
+  --color-surface-tint: 200 198 197;
+  --color-on-background: 231 227 220;
+  --color-on-surface: 231 227 220;
+  --color-on-surface-variant: 201 197 189;
+  --color-outline: 146 143 135;
+  --color-outline-variant: 72 69 63;
+  --color-inverse-surface: 231 227 220;
+  --color-inverse-on-surface: 49 48 45;
+  --color-inverse-primary: 95 94 94;
+  --color-primary: 243 240 235;
+  --color-on-primary: 28 28 25;
+  --color-primary-container: 55 51 46;
+  --color-on-primary-container: 216 213 208;
+  --color-secondary: 255 181 157;
+  --color-on-secondary: 92 22 0;
+  --color-secondary-container: 134 34 1;
+  --color-on-secondary-container: 255 219 209;
+  --color-tertiary: 111 216 200;
+  --color-on-tertiary: 0 55 49;
+  --color-tertiary-container: 0 80 72;
+  --color-on-tertiary-container: 140 245 228;
+  --color-error: 255 180 171;
+  --color-on-error: 105 0 5;
+  --color-error-container: 147 0 10;
+  --color-on-error-container: 255 218 214;
+}
 
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -28,21 +118,68 @@
 .woodblock-divider {
   height: 1px;
   width: 100%;
-  background: #1c1c19;
+  background: rgb(var(--color-on-background));
   opacity: 0.2;
   mask-image: linear-gradient(to right, transparent, black, transparent);
   position: relative;
 }
 
 .ink-border {
-  border: 1px solid rgba(26, 26, 26, 0.15);
+  border: 1px solid rgb(var(--color-on-background) / 0.15);
 }
 
 .cta-shadow {
-  box-shadow: 4px 4px 0px 0px #1c1c19;
+  box-shadow: 4px 4px 0px 0px rgb(var(--color-on-background));
 }
 
 .cta-shadow:hover {
-  box-shadow: 2px 2px 0px 0px #1c1c19;
+  box-shadow: 2px 2px 0px 0px rgb(var(--color-on-background));
   transform: translate(2px, 2px);
+}
+
+.woodblock-shadow {
+  box-shadow: 2px 2px 0px 0px rgb(var(--color-on-background));
+}
+
+.hand-carved-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgb(var(--color-on-background) / 0.2) 20%,
+    rgb(var(--color-on-background) / 0.2) 80%,
+    transparent
+  );
+}
+
+.drop-cap::first-letter {
+  float: left;
+  font-family: var(--font-libre-caslon-text), serif;
+  font-size: 5rem;
+  line-height: 1;
+  padding-right: 12px;
+  padding-top: 4px;
+  color: rgb(var(--color-on-background));
+  font-weight: 700;
+}
+
+.ink-divider {
+  height: 1px;
+  background: rgb(var(--color-on-background) / 0.2);
+  width: 100%;
+  position: relative;
+  margin: 4rem 0;
+}
+
+.ink-divider::after {
+  content: '✦';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: rgb(var(--color-background));
+  padding: 0 1rem;
+  font-size: 0.8rem;
+  color: rgb(var(--color-on-background));
 }

@@ -23,6 +23,18 @@ export default defineType({
       type: 'string',
     }),
     defineField({
+      name: 'category',
+      title: 'Category',
+      description: 'e.g. Ceramics, Journals, Apparel, Apothecary — used for the shop filter pills.',
+      type: 'string',
+    }),
+    defineField({
+      name: 'description',
+      title: 'Short description',
+      type: 'text',
+      rows: 2,
+    }),
+    defineField({
       name: 'externalUrl',
       title: 'Link to external shop listing',
       type: 'url',

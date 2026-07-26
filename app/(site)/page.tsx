@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import ArticleCard from '@/components/ArticleCard';
 import MerchCard from '@/components/MerchCard';
+import Logo from '@/components/Logo';
 import { getSiteSettings, getFeaturedArticles, getShopProducts } from '@/lib/sanity.queries';
 
 export const revalidate = 60;
@@ -18,12 +18,10 @@ export default async function HomePage() {
       {/* Hero Section */}
       <main className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto z-10">
         <div className="flex flex-col items-center text-center">
-          <Image
-            alt="Clove & Cauldron Primary Logo"
-            className="w-full max-w-2xl mb-12 opacity-90 transition-opacity hover:opacity-100"
-            src="/logo/lockup-light.svg"
-            width={1864}
-            height={420}
+          <Logo
+            variant="stacked"
+            alt="Clove & Cauldron"
+            className="w-full max-w-md mb-12 opacity-90 transition-opacity hover:opacity-100"
             priority
           />
           <h1 className="font-headline-lg text-headline-lg md:text-display-lg md:font-display-lg text-primary mb-6 tracking-tight max-w-3xl">
@@ -103,7 +101,7 @@ export default async function HomePage() {
                 textiles, each piece is a physical echo of the heritage we
                 celebrate.
               </p>
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-wrap gap-4 pt-4">
                 <Link
                   href="/shop"
                   className="bg-primary text-on-primary px-8 py-3 uppercase tracking-widest font-label-lg text-label-lg ink-border cta-shadow transition-all"
@@ -122,10 +120,12 @@ export default async function HomePage() {
             {products.length > 0 ? (
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-6 pt-12">
-                  {products[0] && <MerchCard product={products[0]} />}
-                  {products[1] && <MerchCard product={products[1]} />}
+                  {products[0] && <MerchCard product={products[0]} compact />}
+                  {products[1] && <MerchCard product={products[1]} compact />}
                 </div>
-                <div className="space-y-6">{products[2] && <MerchCard product={products[2]} />}</div>
+                <div className="space-y-6">
+                  {products[2] && <MerchCard product={products[2]} compact />}
+                </div>
               </div>
             ) : (
               <p className="font-body-md text-body-md text-on-surface-variant italic">
