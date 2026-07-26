@@ -1,0 +1,59 @@
+import ArticleCard from '@/components/ArticleCard';
+import SubjectTags from '@/components/SubjectTags';
+import { getArticlesBySubject, getAllSubjects } from '@/lib/sanity.queries';
+import { notFound } from 'next/navigation';
+
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const subjects = await getAllSubjects().catch(() => []);
+  return subjects.map((s: any) => ({ subject: s.slug.current }));
+}
+
+export default async function SubjectArchivePage({
+  params,
+}: {
+  params: { subject: string };
+}) {
+  const [articles, subjects] = await Promise.all([
+    getArticlesBySubject(params.subject).catch(() => []),
+    getAllSubjects().catch(() => []),
+  ]);
+
+  const currentSubject = subjects.find((s: any) => s.slug.current === params.subject);
+  if (!currentSubject) return notFound();
+
+  return (
+    <div className="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+      <span className="text-secondary font-label-lg text-label-lg uppercase tracking-widest mb-2 block">
+        The Archive
+      </span>
+      <h1 className="font-headline-lg text-headline-lg text-primary mb-4">
+        {currentSubject.name}
+      </h1>
+      {currentSubject.description && (
+        <p className="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-10 leading-relaxed">
+          {currentSubject.description}
+        </p>
+      )}
+
+      <div className="mb-16">
+        <SubjectTags subjects={subjects} activeSlug={params.subject} />
+      </div>
+
+      {articles.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+          {articles.map((article: any) => (
+            <article key={article.slug.current} className="group">
+              <ArticleCard article={article} />
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="font-body-md text-body-md text-on-surface-variant italic">
+          No articles tagged with this subject yet.
+        </p>
+      )}
+    </div>
+  );
+}

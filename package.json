@@ -1,0 +1,32 @@
+{
+  "name": "clove-and-cauldron",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "studio": "sanity dev --config sanity/sanity.config.ts",
+    "studio:build": "sanity build --config sanity/sanity.config.ts"
+  },
+  "dependencies": {
+    "@portabletext/react": "^3.1.0",
+    "@sanity/client": "^6.21.3",
+    "@sanity/image-url": "^1.1.0",
+    "next": "^14.2.35",
+    "next-sanity": "^9.4.4",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "sanity": "^3.57.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.13",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.40",
+    "tailwindcss": "^3.4.7",
+    "typescript": "^5.5.4"
+  }
+}
