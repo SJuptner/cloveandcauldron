@@ -9,54 +9,67 @@ export default async function AboutPage() {
 
   return (
     <div className="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-      <div className="max-w-2xl">
-        <span className="text-secondary font-label-lg text-label-lg uppercase tracking-widest mb-2 block">
-          About
-        </span>
-        <h1 className="mb-10">
-          <Logo variant="wordmark" alt="Clove & Cauldron" className="h-10 md:h-14 w-auto" />
-        </h1>
+      <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center md:items-center gap-10 md:gap-16">
+        <div className="shrink-0 flex justify-center">
+          <Logo variant="icon" alt="Clove & Cauldron" className="w-28 md:w-40 h-auto" />
+        </div>
 
-        {settings?.aboutText ? (
-          <div className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed space-y-6">
-            <PortableText value={settings.aboutText} />
-          </div>
-        ) : (
-          <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-            Clove &amp; Cauldron is an independent research project tracing the
-            symbols, seals, and sacred forms of the Turkic and Alevi-Bektashi
-            worlds — from the steppe tamgas of Central Asia to the living
-            iconography of Anatolia&apos;s heterodox traditions. This site is
-            the archive behind the videos: full citations, source notes, and
-            original research.
-            <br />
-            <br />
-            Add the full about text in the Sanity Studio under Site Settings
-            (/studio).
-          </p>
-        )}
+        <div className="flex-1">
+          {settings?.aboutText ? (
+            <div className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed space-y-6">
+              <PortableText value={settings.aboutText} />
+            </div>
+          ) : (
+            <div className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed space-y-6">
+              <p>
+                Clove &amp; Cauldron is an independent research project
+                tracing the legends, folklore, and symbols of the Turkic
+                worlds, from the ancient traditions of Central Asia to their
+                living echoes in Anatolia today. This site is the archive
+                behind the videos: full citations, source notes, and original
+                research.
+              </p>
+              <p>
+                The site is run by Sarah Juptner, an American with a passion
+                for Turkic culture, history and folklore. Sarah holds a
+                master&apos;s in International Relations from Boğaziçi
+                University and has called Istanbul home since 2012.
+              </p>
+            </div>
+          )}
 
-        <div className="flex flex-wrap gap-4 mt-10">
-          {settings?.youtubeUrl && (
+          <div className="flex flex-wrap gap-4 mt-10">
             <a
-              href={settings.youtubeUrl}
+              href="https://instagram.com/cloveandcauldron"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-transparent text-primary px-8 py-3 uppercase tracking-widest font-label-lg text-label-lg border border-primary/20 hover:bg-surface-container-highest transition-all"
+            >
+              Instagram ↗
+            </a>
+            <a
+              href="https://youtube.com/@cloveandcauldron"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-transparent text-primary px-8 py-3 uppercase tracking-widest font-label-lg text-label-lg border border-primary/20 hover:bg-surface-container-highest transition-all"
             >
               YouTube ↗
             </a>
-          )}
-          {settings?.tiktokUrl && (
             <a
-              href={settings.tiktokUrl}
+              href="https://tiktok.com/@cloveandcauldron"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-transparent text-primary px-8 py-3 uppercase tracking-widest font-label-lg text-label-lg border border-primary/20 hover:bg-surface-container-highest transition-all"
             >
               TikTok ↗
             </a>
-          )}
+            <a
+              href="mailto:info.cloveandcauldron@gmail.com"
+              className="bg-transparent text-primary px-8 py-3 uppercase tracking-widest font-label-lg text-label-lg border border-primary/20 hover:bg-surface-container-highest transition-all"
+            >
+              Email ↗
+            </a>
+          </div>
         </div>
       </div>
     </div>

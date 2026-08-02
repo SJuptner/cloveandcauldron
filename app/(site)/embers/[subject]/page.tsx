@@ -26,7 +26,7 @@ export default async function SubjectArchivePage({
   return (
     <div className="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
       <span className="text-secondary font-label-lg text-label-lg uppercase tracking-widest mb-2 block">
-        The Archive
+        The Embers
       </span>
       <h1 className="font-headline-lg text-headline-lg text-primary mb-4">
         {currentSubject.name}

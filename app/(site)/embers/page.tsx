@@ -1,5 +1,6 @@
 import ArticleCard from '@/components/ArticleCard';
 import SubjectTags from '@/components/SubjectTags';
+import ArchiveSearch from '@/components/ArchiveSearch';
 import { getAllArticles, getAllSubjects } from '@/lib/sanity.queries';
 
 export const revalidate = 60;
@@ -12,12 +13,13 @@ export default async function ArchivePage() {
 
   return (
     <div className="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-      <span className="text-secondary font-label-lg text-label-lg uppercase tracking-widest mb-2 block">
-        The Archive
-      </span>
-      <h1 className="font-headline-lg text-headline-lg text-primary mb-10">
-        Browse by Subject
-      </h1>
+      <h1 className="font-headline-lg text-headline-lg text-primary mb-4">The Embers</h1>
+      <p className="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-10 leading-relaxed">
+        Welcome to The Embers, our digital hearth where old folklore meets the
+        modern seeker.
+      </p>
+
+      <ArchiveSearch articles={articles} />
 
       <div className="mb-16">
         <SubjectTags subjects={subjects} />

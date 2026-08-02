@@ -5,21 +5,26 @@ export async function getSiteSettings() {
   return client.fetch(`*[_type == "siteSettings"][0]`);
 }
 
-export async function getFeaturedArticles() {
-  const articles = await client.fetch(`
-    *[_type == "article" && featured == true] | order(publishedAt desc) [0...3] {
+export async function getRecentArticles(limit = 3) {
+  // Always the most recently published articles -- ignores the `featured`
+  // flag so the homepage "Latest" section reflects what's actually posted.
+  const articles = await client.fetch(
+    `
+    *[_type == "article"] | order(publishedAt desc) [0...$limit] {
       title, slug, dek, coverImage, publishedAt,
       subjects[]->{name, slug}
     }
-  `);
-  // Preview fallback: shows the 3 demo articles until real ones are published.
-  return articles.length ? articles : demoArticles.slice(0, 3);
+  `,
+    { limit }
+  );
+  // Preview fallback: shows demo articles only until real ones are published.
+  return articles.length ? articles : demoArticles.slice(0, limit);
 }
 
 export async function getAllArticles() {
   const articles = await client.fetch(`
     *[_type == "article"] | order(publishedAt desc) {
-      title, slug, dek, coverImage, publishedAt,
+      title, slug, dek, coverImage, body, publishedAt,
       subjects[]->{name, slug}
     }
   `);
@@ -58,30 +63,47 @@ export async function getRelatedArticles(
   subjectSlugs: string[],
   excludeId: string,
   limit = 3
-) {
-  const query = subjectSlugs.length
-    ? client.fetch(
-        `
+): Promise<any[]> {
+  const anyOtherArticleQuery = () =>
+    client.fetch(
+      `
+      *[_type == "article" && _id != $excludeId] | order(publishedAt desc) [0...$limit] {
+        title, slug, dek, coverImage,
+        subjects[]->{name, slug}
+      }
+    `,
+      { excludeId, limit }
+    );
+
+  let articles: any[] = [];
+
+  // Prefer articles that share a subject tag.
+  if (subjectSlugs.length) {
+    articles = await client.fetch(
+      `
       *[_type == "article" && _id != $excludeId && count((subjects[]->slug.current)[@ in $subjectSlugs]) > 0]
         | order(publishedAt desc) [0...$limit] {
         title, slug, dek, coverImage,
         subjects[]->{name, slug}
       }
     `,
-        { excludeId, subjectSlugs, limit }
-      )
-    : client.fetch(
-        `
-      *[_type == "article" && _id != $excludeId] | order(publishedAt desc) [0...$limit] {
-        title, slug, dek, coverImage,
-        subjects[]->{name, slug}
-      }
-    `,
-        { excludeId, limit }
-      );
+      { excludeId, subjectSlugs, limit }
+    );
+  }
 
-  const articles = await query;
+  // Nothing shares a tag (or none to match on) -- still recommend whatever
+  // else has actually been published, rather than jumping to demo content.
+  if (!articles.length) {
+    articles = await anyOtherArticleQuery();
+  }
+
   if (articles.length) return articles;
+
+  // Demo articles are only a stand-in while the site has zero real content
+  // at all. Once a real article exists, showing demo "recommendations"
+  // alongside it would be misleading -- better to show no related articles
+  // than fake ones, so only fall back here while previewing a demo article.
+  if (!excludeId.startsWith('demo-')) return [];
 
   const pool = demoArticles.filter((a) => a._id !== excludeId);
   const bySubject = subjectSlugs.length

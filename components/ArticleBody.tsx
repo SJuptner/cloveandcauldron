@@ -1,6 +1,53 @@
+import { Children, Fragment, ReactNode } from 'react';
 import { PortableText, PortableTextComponents } from '@portabletext/react';
 import Image from 'next/image';
 import { resolveImageSrc } from '@/lib/sanity.image';
+
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+// Trailing characters that usually belong to the surrounding sentence, not the URL
+// itself (e.g. "...see https://example.com." or "(https://example.com)").
+const TRAILING_PUNCTUATION_REGEX = /[),.;:!?\]]+$/;
+
+// Auto-links bare "https://..." text so citations work even when the Studio
+// author didn't manually add a link mark to that span (easy to miss, and
+// inconsistent results are confusing -- see the article citation lists).
+// Only plain-string children are touched; children already rendered as
+// elements (existing link marks, bold/italic, footnotes) pass through as-is.
+function linkifyChildren(children: ReactNode): ReactNode {
+  return Children.map(children, (child, i) => {
+    if (typeof child !== 'string') return child;
+
+    // A single capturing group means split() deterministically alternates
+    // plain text (even indices) and matched URLs (odd indices) -- no need
+    // to re-test each part against the (stateful, global) regex.
+    const parts = child.split(URL_REGEX);
+    if (parts.length === 1) return child;
+
+    return (
+      <Fragment key={i}>
+        {parts.map((part, j) => {
+          if (j % 2 === 0) return part || null;
+          const trailingMatch = part.match(TRAILING_PUNCTUATION_REGEX);
+          const trailing = trailingMatch ? trailingMatch[0] : '';
+          const url = trailing ? part.slice(0, -trailing.length) : part;
+          return (
+            <Fragment key={j}>
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-secondary underline decoration-secondary/30 underline-offset-4"
+              >
+                {url}
+              </a>
+              {trailing}
+            </Fragment>
+          );
+        })}
+      </Fragment>
+    );
+  });
+}
 
 // Groups consecutive standalone "photo" blocks into a paired 2-col grid,
 // matching the editorial layout in the design mockups.
@@ -37,7 +84,7 @@ function getComponents(dropCapKey: string | undefined): PortableTextComponents {
             auto_awesome
           </span>
           <p className="font-headline-md text-headline-md italic text-primary leading-snug">
-            {children}
+            {linkifyChildren(children)}
           </p>
         </blockquote>
       ),
@@ -49,7 +96,7 @@ function getComponents(dropCapKey: string | undefined): PortableTextComponents {
               : 'font-body-lg text-body-lg text-on-surface-variant leading-relaxed mb-6'
           }
         >
-          {children}
+          {linkifyChildren(children)}
         </p>
       ),
     },

@@ -1,16 +1,15 @@
 import Link from 'next/link';
 import ArticleCard from '@/components/ArticleCard';
-import MerchCard from '@/components/MerchCard';
 import Logo from '@/components/Logo';
-import { getSiteSettings, getFeaturedArticles, getShopProducts } from '@/lib/sanity.queries';
+import NewsletterForm from '@/components/NewsletterForm';
+import { getSiteSettings, getRecentArticles } from '@/lib/sanity.queries';
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [settings, articles, products] = await Promise.all([
+  const [settings, articles] = await Promise.all([
     getSiteSettings().catch(() => null),
-    getFeaturedArticles().catch(() => []),
-    getShopProducts().catch(() => []),
+    getRecentArticles(3).catch(() => []),
   ]);
 
   return (
@@ -37,10 +36,10 @@ export default async function HomePage() {
               'Exploring the mythic heritage of Anatolia and the Turkic spirits through woodblock and word. A curated sanctuary for the artisanal and the arcane.'}
           </p>
           <Link
-            href="/archive"
+            href="/embers"
             className="bg-primary text-on-primary px-10 py-4 uppercase tracking-[0.2em] font-label-lg text-label-lg ink-border cta-shadow transition-all duration-200"
           >
-            Enter the Pantheon
+            Gather Around the Fire
           </Link>
         </div>
       </main>
@@ -50,20 +49,20 @@ export default async function HomePage() {
         <div className="woodblock-divider" />
       </div>
 
-      {/* Latest Myths Section */}
+      {/* The Latest Section */}
       <section className="mb-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
         <div className="flex justify-between items-end mb-12">
           <div className="max-w-md">
             <span className="text-secondary font-label-lg text-label-lg uppercase tracking-widest mb-2 block">
-              The Chronicles
+              The Embers
             </span>
-            <h2 className="font-headline-lg text-headline-lg text-primary">Latest Myths</h2>
+            <h2 className="font-headline-lg text-headline-lg text-primary">The Latest</h2>
           </div>
           <Link
-            href="/archive"
-            className="hidden md:flex items-center gap-2 font-label-lg text-label-lg text-on-surface-variant hover:text-secondary transition-colors underline underline-offset-8"
+            href="/embers"
+            className="hidden md:flex items-center gap-2 font-label-lg text-label-lg text-on-surface-variant hover:text-secondary transition-colors"
           >
-            Browse Archive
+            <span className="underline underline-offset-8">Browse The Embers</span>
             <span className="material-symbols-outlined text-[18px]">arrow_right_alt</span>
           </Link>
         </div>
@@ -78,62 +77,9 @@ export default async function HomePage() {
           </div>
         ) : (
           <p className="font-body-md text-body-md text-on-surface-variant italic">
-            No myths published yet — add articles in the Sanity Studio copy desk at /studio.
+            No embers published yet — add articles in the Sanity Studio copy desk at /studio.
           </p>
         )}
-      </section>
-
-      {/* Shop Teaser Section */}
-      <section className="bg-surface-container-high py-24 mb-0 relative overflow-hidden">
-        <div className="parchment-grain" />
-        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
-              <span className="text-secondary font-label-lg text-label-lg uppercase tracking-widest block">
-                The Atelye
-              </span>
-              <h2 className="font-headline-lg text-headline-lg md:text-headline-lg text-primary leading-tight">
-                Artisanal Craft <br />
-                for the Ritual of Living
-              </h2>
-              <p className="font-body-lg text-body-lg text-on-surface-variant">
-                From hand-carved boxwood spoons to hand-loomed Anatolian
-                textiles, each piece is a physical echo of the heritage we
-                celebrate.
-              </p>
-              <div className="flex flex-wrap gap-4 pt-4">
-                <Link
-                  href="/shop"
-                  className="bg-primary text-on-primary px-8 py-3 uppercase tracking-widest font-label-lg text-label-lg ink-border cta-shadow transition-all"
-                >
-                  Shop Collection
-                </Link>
-                <Link
-                  href="/about"
-                  className="bg-transparent text-primary px-8 py-3 uppercase tracking-widest font-label-lg text-label-lg border border-primary/20 hover:bg-surface-container-highest transition-all"
-                >
-                  Our Process
-                </Link>
-              </div>
-            </div>
-
-            {products.length > 0 ? (
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-6 pt-12">
-                  {products[0] && <MerchCard product={products[0]} compact />}
-                  {products[1] && <MerchCard product={products[1]} compact />}
-                </div>
-                <div className="space-y-6">
-                  {products[2] && <MerchCard product={products[2]} compact />}
-                </div>
-              </div>
-            ) : (
-              <p className="font-body-md text-body-md text-on-surface-variant italic">
-                Shop items coming soon — add products in the Studio.
-              </p>
-            )}
-          </div>
-        </div>
       </section>
 
       {/* Newsletter Section */}
@@ -141,24 +87,10 @@ export default async function HomePage() {
         <div className="max-w-2xl mx-auto space-y-8">
           <h3 className="font-headline-md text-headline-md text-primary">Join the Inner Circle</h3>
           <p className="font-body-md text-body-md text-on-surface-variant">
-            Receive seasonal scrolls containing new myths, artisan spotlights,
-            and early access to shop drops.
+            New pieces are added to The Embers periodically. Leave your email
+            and we&apos;ll send word the moment something new is live.
           </p>
-          <form className="flex flex-col md:flex-row gap-4 items-end">
-            <div className="flex-1 w-full text-left">
-              <label className="font-label-sm text-label-sm uppercase tracking-widest mb-2 block opacity-60">
-                Parchment Address
-              </label>
-              <input
-                className="w-full bg-transparent border-0 border-b border-primary/20 focus:ring-0 focus:border-primary py-3 px-0 font-body-md placeholder:text-outline/40"
-                placeholder="you@alchemy.com"
-                type="email"
-              />
-            </div>
-            <button className="bg-primary text-on-primary px-8 py-3 uppercase tracking-widest font-label-lg text-label-lg ink-border w-full md:w-auto hover:bg-secondary transition-colors">
-              Subscribe
-            </button>
-          </form>
+          <NewsletterForm />
         </div>
       </section>
     </>

@@ -13,6 +13,13 @@ const nextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  // /archive was renamed to /embers -- keep old links working.
+  async redirects() {
+    return [
+      { source: '/archive', destination: '/embers', permanent: true },
+      { source: '/archive/:subject', destination: '/embers/:subject', permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

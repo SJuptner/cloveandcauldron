@@ -24,7 +24,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   if (!article) return notFound();
 
   const subjectSlugs = (article.subjects || []).map((s: any) => s.slug.current);
-  let related = await getRelatedArticles(subjectSlugs, article._id, 3).catch(() => []);
+  let related = await getRelatedArticles(subjectSlugs, article._id, 3).catch((): any[] => []);
   if (related.length < 3) {
     const latest = await getAllArticles().catch(() => []);
     const seen = new Set([params.slug, ...related.map((r: any) => r.slug.current)]);
@@ -59,7 +59,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
               {article.subjects?.map((s: any) => (
                 <Link
                   key={s.slug.current}
-                  href={`/archive/${s.slug.current}`}
+                  href={`/embers/${s.slug.current}`}
                   className="font-label-sm text-label-sm text-secondary uppercase tracking-widest underline decoration-secondary/30 underline-offset-4"
                 >
                   {s.name}

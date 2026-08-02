@@ -7,10 +7,9 @@ import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 
 const NAV_LINKS = [
-  { href: '/', label: 'Myths' },
-  { href: '/archive', label: 'Archive' },
-  { href: '/shop', label: 'Shop' },
-  { href: '/about', label: 'About' },
+  { href: '/', label: 'Home' },
+  { href: '/embers', label: 'The Embers' },
+  { href: '/about', label: 'About C&C' },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -25,7 +24,7 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-sm border-b border-outline/20">
       <nav className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
         <Link href="/" className="shrink-0" onClick={() => setMenuOpen(false)}>
-          <Logo variant="lockup" className="h-8 sm:h-10 w-auto" priority />
+          <Logo variant="lockup" className="h-[42px] sm:h-[52px] w-auto" priority />
         </Link>
         <div className="hidden md:flex gap-8 items-center">
           {NAV_LINKS.map((link) => (
@@ -44,13 +43,6 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
-          <Link
-            href="/shop"
-            aria-label="Shop"
-            className="material-symbols-outlined text-primary p-2.5 hover:bg-surface-container-high transition-all rounded-full"
-          >
-            shopping_bag
-          </Link>
           <button
             type="button"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}

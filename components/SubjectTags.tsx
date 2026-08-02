@@ -20,7 +20,7 @@ export default function SubjectTags({
         return (
           <Link
             key={subject.slug.current}
-            href={`/archive/${subject.slug.current}`}
+            href={`/embers/${subject.slug.current}`}
             className={
               isActive
                 ? 'px-4 py-2 bg-primary text-on-primary font-label-lg text-label-lg uppercase tracking-widest ink-border'
