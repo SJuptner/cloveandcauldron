@@ -1,3 +1,5 @@
+import CookiePreferencesButton from '@/components/CookiePreferencesButton';
+
 export const metadata = {
   title: 'Privacy Scroll | Clove & Cauldron',
 };
@@ -18,10 +20,30 @@ export default function PrivacyPage() {
 
           <h2 className="font-headline-sm text-headline-sm text-primary mt-8 mb-2">Cookies</h2>
           <p>
-            We use a small number of cookies to remember preferences, such as
-            light or dark mode, and to understand overall site traffic. These
-            are not used to build an advertising profile of you. You can
-            clear cookies at any time through your browser settings.
+            We use essential cookies to remember preferences, such as light or
+            dark mode, at all times. With your permission, we also use Google
+            Analytics to understand overall site traffic — how many people
+            visit, which pages they read, and roughly where they&apos;re
+            visiting from. Google Analytics is not used to build an
+            advertising profile of you here, but Google processes this data
+            under its own{' '}
+            <a
+              href="https://policies.google.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-secondary underline decoration-secondary/30 underline-offset-4"
+            >
+              privacy policy
+            </a>
+            .
+          </p>
+          <p>
+            Analytics cookies only load after you accept them in the cookie
+            consent banner shown on your first visit. You can change your
+            choice at any time —{' '}
+            <CookiePreferencesButton className="text-secondary underline decoration-secondary/30 underline-offset-4" />{' '}
+            — or clear cookies at any time through your browser settings,
+            which resets your choice.
           </p>
 
           <h2 className="font-headline-sm text-headline-sm text-primary mt-8 mb-2">Disclaimer</h2>

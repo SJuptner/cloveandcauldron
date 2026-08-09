@@ -1,4 +1,5 @@
 import { InstagramIcon, YouTubeIcon, TikTokIcon } from './SocialIcons';
+import CookiePreferencesButton from './CookiePreferencesButton';
 
 export default function Footer() {
   return (
@@ -76,6 +77,7 @@ export default function Footer() {
           >
             Privacy Scroll
           </a>
+          <CookiePreferencesButton className="text-on-surface-variant hover:text-secondary transition-colors underline decoration-secondary/30 underline-offset-4 font-body-md text-label-sm text-left" />
         </div>
       </div>
     </footer>

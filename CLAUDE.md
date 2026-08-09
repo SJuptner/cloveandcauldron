@@ -8,7 +8,7 @@ When the user says **"ship it"**, run this full sequence without pausing for con
 4. `pnpm build` — this is a local pre-flight sanity check. If it fails, stop and report the error instead of pushing/deploying.
 5. `git push origin main`.
 
-Deployment is automatic: this repo is linked to Vercel (project `clove-and-cauldron`, org `sarahjuptner-6865`) via GitHub git integration on the `SJuptner/cloveandcauldron` repo. No `vercel` CLI invocation is needed as part of the ritual — confirmed working via git push alone:
+Deployment is automatic: this repo is linked to Vercel (project `clove-and-cauldron`, org `clove-and-cauldron`) via GitHub git integration on the `SJuptner/cloveandcauldron` repo. No `vercel` CLI invocation is needed as part of the ritual — confirmed working via git push alone:
 
 - Push to `development` → Vercel builds and deploys a **preview URL**.
 - Push to `main` → Vercel builds and deploys to **production** (cloveandcauldron.co).
