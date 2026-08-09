@@ -66,25 +66,7 @@ function withImagePairs(blocks: any[]) {
   return result;
 }
 
-// Portable Text mark components only receive the markDef for their own
-// span, not the article as a whole, so footnote numbering has to be
-// precomputed by walking every block's markDefs in document order.
-function buildFootnoteIndex(blocks: any[]): Map<string, number> {
-  const index = new Map<string, number>();
-  let n = 0;
-  for (const block of blocks || []) {
-    if (block._type !== 'block' || !block.markDefs) continue;
-    for (const def of block.markDefs) {
-      if (def._type === 'footnote') index.set(def._key, ++n);
-    }
-  }
-  return index;
-}
-
-function getComponents(
-  dropCapKey: string | undefined,
-  footnoteIndex: Map<string, number>
-): PortableTextComponents {
+function getComponents(dropCapKey: string | undefined): PortableTextComponents {
   return {
     block: {
       h2: ({ children }) => (
@@ -211,28 +193,21 @@ function getComponents(
           {children}
         </a>
       ),
-      footnote: ({ value, children }) => {
-        const number = footnoteIndex.get(value?._key);
-        return (
-          <span
-            className="border-b border-dotted border-on-surface-variant cursor-help"
-            title={value?.text || 'Source note'}
-          >
-            {children}
-            {number && (
-              <sup className="ml-0.5 text-secondary font-label-sm text-label-sm">[{number}]</sup>
-            )}
-          </span>
-        );
-      },
+      footnote: ({ value, children }) => (
+        <span
+          className="border-b border-dotted border-on-surface-variant cursor-help"
+          title={value?.text || 'Source note'}
+        >
+          {children}
+        </span>
+      ),
     },
   };
 }
 
 export default function ArticleBody({ value }: { value: any[] }) {
   const firstNormalKey = value?.find((b) => b._type === 'block' && (!b.style || b.style === 'normal'))?._key;
-  const footnoteIndex = buildFootnoteIndex(value);
   const processed = withImagePairs(value || []);
 
-  return <PortableText value={processed} components={getComponents(firstNormalKey, footnoteIndex)} />;
+  return <PortableText value={processed} components={getComponents(firstNormalKey)} />;
 }
