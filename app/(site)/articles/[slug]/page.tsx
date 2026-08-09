@@ -48,6 +48,9 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   const symbolism = (article.body || [])
     .filter((b: any) => b._type === 'symbolCallout' && b.label)
     .map((b: any) => b.label);
+  // heroImage is an optional wide-format override for the banner below --
+  // most articles just reuse the (portrait) coverImage for both contexts.
+  const heroImage = article.heroImage || article.coverImage;
 
   return (
     <div className="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
@@ -87,17 +90,17 @@ export default async function ArticlePage({ params }: { params: { slug: string }
 
         <div className="w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] overflow-hidden ink-border bg-surface-container mb-4">
           <Image
-            src={resolveImageSrc(article.coverImage, 1600)}
-            alt={article.coverImage?.alt || article.title}
+            src={resolveImageSrc(heroImage, 1600, 686)}
+            alt={heroImage?.alt || article.title}
             width={1600}
             height={686}
-            className="w-full h-full object-cover grayscale contrast-125 mix-blend-multiply opacity-90"
+            className="w-full h-full object-cover"
             priority
           />
         </div>
-        {article.coverImage?.caption && (
+        {heroImage?.caption && (
           <p className="text-center font-label-sm text-label-sm italic text-on-surface-variant/70">
-            {article.coverImage.caption}
+            {heroImage.caption}
           </p>
         )}
       </header>

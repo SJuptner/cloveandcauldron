@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { AsteriskIcon, LinkIcon } from '@sanity/icons';
 
 export default defineType({
   name: 'article',
@@ -37,6 +38,21 @@ export default defineType({
       title: 'Cover Image',
       type: 'image',
       group: 'content',
+      description:
+        'Used for article cards on the homepage and listing pages (portrait crop). Also used as the article page banner if no separate Hero Image is set below.',
+      options: { hotspot: true },
+      fields: [
+        { name: 'alt', title: 'Alt text', type: 'string' },
+        { name: 'caption', title: 'Caption', type: 'string' },
+      ],
+    }),
+    defineField({
+      name: 'heroImage',
+      title: 'Hero Image (optional)',
+      type: 'image',
+      group: 'content',
+      description:
+        'Optional wide-format photo for the banner at the top of the article page. Leave empty to reuse the Cover Image there. Set this when one photo does not crop well both as a portrait card AND a wide banner.',
       options: { hotspot: true },
       fields: [
         { name: 'alt', title: 'Alt text', type: 'string' },
@@ -57,6 +73,10 @@ export default defineType({
             { title: 'H3', value: 'h3' },
             { title: 'Pull Quote', value: 'blockquote' },
           ],
+          lists: [
+            { title: 'Numbered', value: 'number' },
+            { title: 'Bulleted', value: 'bullet' },
+          ],
           marks: {
             decorators: [
               { title: 'Bold', value: 'strong' },
@@ -67,12 +87,14 @@ export default defineType({
                 name: 'link',
                 type: 'object',
                 title: 'Link',
+                icon: LinkIcon,
                 fields: [{ name: 'href', type: 'url', title: 'URL' }],
               },
               {
                 name: 'footnote',
                 type: 'object',
                 title: 'Footnote / Source',
+                icon: AsteriskIcon,
                 fields: [{ name: 'text', type: 'string', title: 'Note text' }],
               },
             ],

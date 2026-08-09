@@ -20,7 +20,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
       <div className="relative overflow-hidden mb-6 aspect-[4/5] ink-border bg-surface-container">
         <Image
           className="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-          src={resolveImageSrc(article.coverImage, 800)}
+          src={resolveImageSrc(article.coverImage, 800, 1000)}
           alt={article.coverImage?.alt || article.title}
           fill
         />

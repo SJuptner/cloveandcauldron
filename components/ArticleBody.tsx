@@ -66,7 +66,25 @@ function withImagePairs(blocks: any[]) {
   return result;
 }
 
-function getComponents(dropCapKey: string | undefined): PortableTextComponents {
+// Portable Text mark components only receive the markDef for their own
+// span, not the article as a whole, so footnote numbering has to be
+// precomputed by walking every block's markDefs in document order.
+function buildFootnoteIndex(blocks: any[]): Map<string, number> {
+  const index = new Map<string, number>();
+  let n = 0;
+  for (const block of blocks || []) {
+    if (block._type !== 'block' || !block.markDefs) continue;
+    for (const def of block.markDefs) {
+      if (def._type === 'footnote') index.set(def._key, ++n);
+    }
+  }
+  return index;
+}
+
+function getComponents(
+  dropCapKey: string | undefined,
+  footnoteIndex: Map<string, number>
+): PortableTextComponents {
   return {
     block: {
       h2: ({ children }) => (
@@ -100,6 +118,22 @@ function getComponents(dropCapKey: string | undefined): PortableTextComponents {
         </p>
       ),
     },
+    list: {
+      number: ({ children }) => (
+        <ol className="list-decimal list-outside pl-6 space-y-2 font-body-lg text-body-lg text-on-surface-variant mb-6">
+          {children}
+        </ol>
+      ),
+      bullet: ({ children }) => (
+        <ul className="list-disc list-outside pl-6 space-y-2 font-body-lg text-body-lg text-on-surface-variant mb-6">
+          {children}
+        </ul>
+      ),
+    },
+    listItem: {
+      number: ({ children }) => <li className="pl-1">{linkifyChildren(children)}</li>,
+      bullet: ({ children }) => <li className="pl-1">{linkifyChildren(children)}</li>,
+    },
     types: {
       image: ({ value }) => {
         const layout = value.layout || 'inline';
@@ -107,7 +141,7 @@ function getComponents(dropCapKey: string | undefined): PortableTextComponents {
           <figure className={`my-10 ${layout === 'wide' ? '-mx-8 md:-mx-16' : ''}`}>
             <div className="relative aspect-[3/2] ink-border overflow-hidden">
               <Image
-                src={resolveImageSrc(value, 1400)}
+                src={resolveImageSrc(value, 1400, 933)}
                 alt={value.alt || ''}
                 fill
                 className="object-cover"
@@ -127,10 +161,10 @@ function getComponents(dropCapKey: string | undefined): PortableTextComponents {
             <div key={image._key} className="aspect-square bg-surface-container-high ink-border overflow-hidden">
               <div className="relative w-full h-full">
                 <Image
-                  src={resolveImageSrc(image, 700)}
+                  src={resolveImageSrc(image, 700, 700)}
                   alt={image.alt || ''}
                   fill
-                  className="object-cover grayscale hover:scale-105 transition-transform duration-700"
+                  className="object-cover hover:scale-105 transition-transform duration-700"
                 />
               </div>
             </div>
@@ -177,18 +211,28 @@ function getComponents(dropCapKey: string | undefined): PortableTextComponents {
           {children}
         </a>
       ),
-      footnote: ({ children }) => (
-        <span className="border-b border-dotted border-on-surface-variant cursor-help" title="Source note">
-          {children}
-        </span>
-      ),
+      footnote: ({ value, children }) => {
+        const number = footnoteIndex.get(value?._key);
+        return (
+          <span
+            className="border-b border-dotted border-on-surface-variant cursor-help"
+            title={value?.text || 'Source note'}
+          >
+            {children}
+            {number && (
+              <sup className="ml-0.5 text-secondary font-label-sm text-label-sm">[{number}]</sup>
+            )}
+          </span>
+        );
+      },
     },
   };
 }
 
 export default function ArticleBody({ value }: { value: any[] }) {
   const firstNormalKey = value?.find((b) => b._type === 'block' && (!b.style || b.style === 'normal'))?._key;
+  const footnoteIndex = buildFootnoteIndex(value);
   const processed = withImagePairs(value || []);
 
-  return <PortableText value={processed} components={getComponents(firstNormalKey)} />;
+  return <PortableText value={processed} components={getComponents(firstNormalKey, footnoteIndex)} />;
 }

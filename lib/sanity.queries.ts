@@ -49,7 +49,7 @@ export async function getArticleBySlug(slug: string) {
   const article = await client.fetch(
     `
     *[_type == "article" && slug.current == $slug][0] {
-      _id, title, dek, coverImage, body, publishedAt,
+      _id, title, dek, coverImage, heroImage, body, publishedAt,
       subjects[]->{name, slug},
       relatedVideo->{title, url, platform}
     }
