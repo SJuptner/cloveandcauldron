@@ -26,6 +26,12 @@ export default function Footer() {
           </a>
           <a
             className="text-on-surface-variant hover:text-secondary transition-colors underline decoration-secondary/30 underline-offset-4 font-body-md"
+            href="/the-long-road"
+          >
+            The Long Road
+          </a>
+          <a
+            className="text-on-surface-variant hover:text-secondary transition-colors underline decoration-secondary/30 underline-offset-4 font-body-md"
             href="/about"
           >
             About C&amp;C
