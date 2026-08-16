@@ -1,0 +1,496 @@
+/* Ported from the timeline prototype almost verbatim -- selectors, layout, hover
+   states and transitions are unchanged. What's adapted: color values now reference
+   the site's real M3 tokens (app/globals.css) instead of the prototype's own
+   hand-picked hex, font-family is left to Tailwind's font-* utility classes applied
+   in the component instead of a hardcoded serif stack, and shadows are flattened to
+   match the site's hard-edge ink-border look instead of soft blurred drop shadows.
+   --bg/--bg-elevated/--bg-elevated-2 intentionally reference the SAME tokens every
+   other page uses (--color-background/-surface-container/-surface-container-high)
+   rather than a page-specific tier: the fixed header blends translucently over
+   whatever's directly behind it, so if this page's background differs even
+   slightly from the rest of the site, the header visibly changes color when you
+   land here. Only the --lane- colors, --knot-gold, --dim-fill (bespoke
+   categorical colors with no site equivalent) need their own light/dark values. */
+.root {
+  --bg: rgb(var(--color-background));
+  --bg-elevated: rgb(var(--color-surface-container));
+  --bg-elevated-2: rgb(var(--color-surface-container-high));
+  --text: rgb(var(--color-on-background));
+  --text-secondary: rgb(var(--color-on-surface-variant));
+  --border: rgb(var(--color-outline) / 0.3);
+  --accent: rgb(var(--color-secondary));
+  --btn-bg: rgb(var(--color-primary));
+  --btn-text: rgb(var(--color-on-primary));
+  --lane-ca: #7f9468;
+  --lane-ee: #5f84a3;
+  --lane-an: #c17a3b;
+  --lane-me: #a55b45;
+  --lane-sa: #8f6a9e;
+  --dim-fill: #d9d3c3;
+  --knot-gold: #b8860f;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+}
+
+:global(.dark) .root {
+  --lane-ca: #8fa679;
+  --lane-ee: #7ba0c0;
+  --lane-an: #d99a5c;
+  --lane-me: #c07a63;
+  --lane-sa: #ab86bb;
+  --dim-fill: #3a3833;
+  --knot-gold: #d4af37;
+}
+
+.header {
+  position: relative;
+  z-index: 2;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.langToggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.langToggle button {
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.langToggle button.active {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.headerToolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.headerToolBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.headerToolBtn:hover {
+  background: rgb(var(--color-on-background) / 0.08);
+}
+.headerToolIc {
+  font-size: 19px;
+}
+.headerDivider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+.legendRow {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 5px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.72rem;
+}
+.legendChip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-secondary);
+}
+.legendSwatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+
+.flagNote {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  text-align: right;
+  flex: 1;
+  min-width: 240px;
+  line-height: 1.3;
+}
+
+.mainRow {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}
+.stageWrap {
+  flex: 1;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg);
+}
+.stageWrap > *:not(:global(.parchment-grain)):not(.sidebarExpandTabAnchor):not(.tooltip) {
+  position: relative;
+}
+
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--bg-elevated);
+  transition: width 0.18s ease, min-width 0.18s ease;
+  overflow: hidden;
+  position: relative;
+}
+.sidebar > *:not(:global(.parchment-grain)) {
+  position: relative;
+}
+.sidebarCollapsed {
+  width: 0;
+  min-width: 0;
+  border-right: none;
+}
+.sidebarHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.sidebarSearch {
+  margin: 8px 10px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.78rem;
+}
+.sidebarList {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 8px;
+}
+.sidebarLaneHead {
+  padding: 6px 12px 3px;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 3px solid transparent;
+}
+.sidebarItem:hover {
+  background: rgb(var(--color-on-background) / 0.06);
+}
+.sidebarItemActive {
+  border-left-color: var(--accent);
+  background: rgb(var(--color-on-background) / 0.08);
+  font-weight: 700;
+}
+.sidebarItemSwatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.sidebarItemYrs {
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.sidebarExpandTabAnchor {
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 0;
+  overflow: visible;
+  z-index: 2;
+}
+.sidebarExpandTab {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 22px;
+  height: 32px;
+  border-radius: 0 6px 6px 0;
+  background: var(--bg-elevated-2);
+  border: 1px solid var(--border);
+  border-left: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text);
+}
+.sidebarExpandTabShow {
+  display: flex;
+}
+
+.iconBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: background 0.15s;
+}
+.iconBtn:hover {
+  background: var(--bg-elevated);
+}
+.sidebarHead .iconBtn {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+
+.stage {
+  width: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+.stage * {
+  user-select: none;
+}
+.stageDragging {
+  cursor: grabbing;
+}
+
+/* A plain flex child of .root, not fixed/sticky: .mainRow is the only flex:1
+   (and only scrollable) region, so this naturally stays pinned below it
+   without needing to escape into viewport-relative positioning. */
+.bottomDock {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 5;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 2px 0 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+/* The grain overlay is position:absolute + z-index:0 (see globals.css), which
+   -- per normal CSS stacking rules -- paints ABOVE ordinary static-position
+   content, not below it. Lifting the real content to position:relative (same
+   z-index:auto stacking level) makes DOM order decide instead, so the grain
+   (first child) stays behind it. :not() excludes the grain div itself so this
+   doesn't fight its own position:absolute, regardless of stylesheet order. */
+.bottomDock > *:not(:global(.parchment-grain)) {
+  position: relative;
+}
+.axisBar {
+  width: 100%;
+  height: 52px;
+  display: block;
+}
+
+.laneLabel {
+  font-size: 14px;
+  fill: var(--text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.laneSep {
+  stroke: var(--text);
+  stroke-opacity: 0.18;
+  stroke-width: 1.2;
+  stroke-dasharray: 1 5;
+}
+
+.eraRibbon {
+  stroke: var(--knot-gold);
+  stroke-opacity: 0.75;
+  stroke-width: 1.1;
+  cursor: pointer;
+}
+.eraRibbon:hover {
+  stroke-width: 1.8;
+  stroke-opacity: 1;
+}
+.eraRibbonActive {
+  stroke: var(--accent);
+  stroke-opacity: 1;
+  stroke-width: 2.2;
+}
+.eraRibbonDim {
+  stroke-opacity: 0.2;
+}
+.eraLabelDim {
+  fill: var(--text-secondary);
+  opacity: 0.75;
+}
+.eraLabel {
+  font-size: 15px;
+  fill: var(--text);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.eventPin {
+  cursor: pointer;
+}
+.eventPin circle {
+  fill: var(--accent);
+  opacity: 0.85;
+  stroke: var(--text);
+  stroke-width: 0.8;
+}
+.eventPin:hover circle {
+  opacity: 1;
+}
+.eventLabel {
+  font-size: 13px;
+  fill: var(--text);
+  pointer-events: none;
+}
+.clusterBadge circle {
+  fill: var(--text);
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  cursor: pointer;
+}
+.clusterBadge text {
+  fill: var(--bg);
+  font-size: 11px;
+  font-weight: 700;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.axisTick line {
+  stroke: var(--text);
+  stroke-opacity: 0.3;
+}
+.axisTick text {
+  font-size: 10px;
+  fill: var(--text-secondary);
+  text-anchor: middle;
+}
+.axisTickActive line {
+  stroke: var(--accent);
+  stroke-opacity: 1;
+  stroke-width: 1.6;
+}
+.axisTickActive text {
+  font-size: 10.5px;
+  fill: var(--accent);
+  font-weight: 700;
+  text-anchor: middle;
+}
+.axisTickActive circle {
+  fill: var(--accent);
+}
+.axisBaseline {
+  stroke: var(--text);
+  stroke-opacity: 0.4;
+  stroke-width: 1.2;
+}
+
+
+.tooltip {
+  position: fixed;
+  z-index: 6;
+  max-width: 260px;
+  pointer-events: none;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  color: var(--text);
+  box-shadow: 2px 2px 0 0 rgb(var(--color-on-background) / 0.2);
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+.tooltip strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--accent);
+}
+.tooltipDates {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}

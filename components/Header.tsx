@@ -9,6 +9,7 @@ import ThemeToggle from './ThemeToggle';
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/embers', label: 'The Embers' },
+  { href: '/the-long-road', label: 'The Long Road' },
   { href: '/about', label: 'About C&C' },
 ];
 

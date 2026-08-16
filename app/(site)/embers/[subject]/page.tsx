@@ -13,14 +13,15 @@ export async function generateStaticParams() {
 export default async function SubjectArchivePage({
   params,
 }: {
-  params: { subject: string };
+  params: Promise<{ subject: string }>;
 }) {
+  const { subject } = await params;
   const [articles, subjects] = await Promise.all([
-    getArticlesBySubject(params.subject).catch(() => []),
+    getArticlesBySubject(subject).catch(() => []),
     getAllSubjects().catch(() => []),
   ]);
 
-  const currentSubject = subjects.find((s: any) => s.slug.current === params.subject);
+  const currentSubject = subjects.find((s: any) => s.slug.current === subject);
   if (!currentSubject) return notFound();
 
   return (
@@ -38,7 +39,7 @@ export default async function SubjectArchivePage({
       )}
 
       <div className="mb-16">
-        <SubjectTags subjects={subjects} activeSlug={params.subject} />
+        <SubjectTags subjects={subjects} activeSlug={subject} />
       </div>
 
       {articles.length > 0 ? (

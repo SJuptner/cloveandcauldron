@@ -19,15 +19,16 @@ export async function generateStaticParams() {
   return slugs.map((s: { slug: string }) => ({ slug: s.slug }));
 }
 
-export default async function ArticlePage({ params }: { params: { slug: string } }) {
-  const article = await getArticleBySlug(params.slug).catch(() => null);
+export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug).catch(() => null);
   if (!article) return notFound();
 
   const subjectSlugs = (article.subjects || []).map((s: any) => s.slug.current);
   let related = await getRelatedArticles(subjectSlugs, article._id, 3).catch((): any[] => []);
   if (related.length < 3) {
     const latest = await getAllArticles().catch(() => []);
-    const seen = new Set([params.slug, ...related.map((r: any) => r.slug.current)]);
+    const seen = new Set([slug, ...related.map((r: any) => r.slug.current)]);
     for (const candidate of latest) {
       if (related.length >= 3) break;
       if (!seen.has(candidate.slug.current)) {
