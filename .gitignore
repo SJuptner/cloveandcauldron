@@ -36,5 +36,8 @@ next-env.d.ts
 # sanity
 /sanity/dist
 
+# generated at pre-dev/pre-build time -- see scripts/generate-logo-meta.mjs
+/lib/generated/
+
 .vercel
 .env*
