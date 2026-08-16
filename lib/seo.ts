@@ -14,9 +14,9 @@ function readPngDimensions(publicPath: string): { width: number; height: number 
   return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
 }
 
-// Raster (PNG) version of the lockup mark, for Google's Organization logo
+// Raster (PNG) version of the icon mark, for Google's Organization logo
 // rich-result eligibility -- Google doesn't accept SVG for that.
-const LOGO_PATH = '/logo/lockup-black.png';
+const LOGO_PATH = '/logo/icon-black.png';
 const LOGO_URL = `${SITE_URL}${LOGO_PATH}`;
 const { width: LOGO_WIDTH, height: LOGO_HEIGHT } = readPngDimensions(LOGO_PATH);
 
