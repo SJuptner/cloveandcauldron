@@ -129,14 +129,22 @@ html {
   direction: ltr;
 }
 
+/* Same fixed 0.15 alpha reads as clear noise against dark backgrounds but
+   is nearly imperceptible against light ones -- an overlay this subtle only
+   shifts near-white pixels a few values, well under what's visible after
+   blending, so light-theme pages need a stronger blend to show the same
+   texture the dark theme already gets "for free". */
 .parchment-grain {
   background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
   background-repeat: repeat;
-  opacity: 0.15;
+  opacity: 0.55;
   pointer-events: none;
   position: absolute;
   inset: 0;
   z-index: 0;
+}
+.dark .parchment-grain {
+  opacity: 0.15;
 }
 
 .woodblock-divider {
