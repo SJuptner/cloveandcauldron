@@ -50,7 +50,7 @@ export async function getArticleBySlug(slug: string) {
     `
     *[_type == "article" && slug.current == $slug][0] {
       _id, _updatedAt, title, dek, coverImage, heroImage, body, publishedAt,
-      metaTitle, metaDescription, ogImage,
+      metaTitle, metaDescription, ogImage, keywords,
       subjects[]->{name, slug},
       relatedVideo->{title, url, platform}
     }

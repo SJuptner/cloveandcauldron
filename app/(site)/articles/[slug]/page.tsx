@@ -35,6 +35,9 @@ export async function generateMetadata({
   return {
     title,
     description,
+    // Only set when there's at least one keyword -- an empty array would
+    // still render an empty <meta name="keywords" content=""> tag.
+    ...(article.keywords?.length ? { keywords: article.keywords } : {}),
     alternates: { canonical: path },
     openGraph: {
       title,

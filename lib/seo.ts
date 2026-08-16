@@ -75,6 +75,9 @@ export function buildArticleJsonLd(article: any, slug: string) {
     headline: title,
     description,
     image: [image],
+    // Body copy quotes a lot of Turkish/Arabic terms -- pin the primary
+    // content language explicitly so crawlers don't have to guess.
+    inLanguage: 'en',
     datePublished: article.publishedAt,
     dateModified: article._updatedAt || article.publishedAt,
     author,

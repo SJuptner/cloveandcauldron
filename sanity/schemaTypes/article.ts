@@ -216,6 +216,16 @@ export default defineType({
       options: { hotspot: true },
       fields: [{ name: 'alt', title: 'Alt text', type: 'string' }],
     }),
+    defineField({
+      name: 'keywords',
+      title: 'Keywords (optional)',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: { layout: 'tags' },
+      group: 'seo',
+      description:
+        'Native-language search terms (e.g. Turkish) this article should also surface for — feeds the keywords meta tag, used by Yandex and some other engines, ignored by Google for ranking but harmless to include.',
+    }),
   ],
   preview: {
     select: { title: 'title', media: 'coverImage', subtitle: 'dek' },
