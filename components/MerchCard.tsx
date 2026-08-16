@@ -48,7 +48,7 @@ export default function MerchCard({ product, compact = false, className }: Merch
           height={875}
         />
         <span className="absolute bottom-4 right-4 w-12 h-12 bg-primary text-on-primary flex items-center justify-center ink-border opacity-100 translate-y-0 md:opacity-0 md:translate-y-4 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300">
-          <span className="material-symbols-outlined">shopping_bag</span>
+          <span className="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
         </span>
       </div>
       <div className="flex justify-between items-start gap-4">

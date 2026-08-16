@@ -80,7 +80,10 @@ function getComponents(dropCapKey: string | undefined): PortableTextComponents {
       ),
       blockquote: ({ children }) => (
         <blockquote className="my-16 px-8 py-10 border-y border-outline/20 relative text-center">
-          <span className="material-symbols-outlined absolute -top-4 left-1/2 -translate-x-1/2 bg-background px-4 text-secondary scale-150">
+          <span
+            className="material-symbols-outlined absolute -top-4 left-1/2 -translate-x-1/2 bg-background px-4 text-secondary scale-150"
+            aria-hidden="true"
+          >
             auto_awesome
           </span>
           <p className="font-headline-md text-headline-md italic text-primary leading-snug">

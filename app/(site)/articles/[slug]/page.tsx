@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -5,12 +6,12 @@ import {
   getArticleBySlug,
   getAllArticleSlugs,
   getRelatedArticles,
-  getAllArticles,
 } from '@/lib/sanity.queries';
 import { resolveImageSrc } from '@/lib/sanity.image';
 import { estimateReadingMinutes } from '@/lib/readingTime';
+import { getArticleSeo, buildArticleJsonLd, serializeJsonLd } from '@/lib/seo';
 import ArticleBody from '@/components/ArticleBody';
-import ArticleCard from '@/components/ArticleCard';
+import RelatedReading from '@/components/RelatedReading';
 
 export const revalidate = 60;
 
@@ -19,24 +20,46 @@ export async function generateStaticParams() {
   return slugs.map((s: { slug: string }) => ({ slug: s.slug }));
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug).catch(() => null);
+  if (!article) return {};
+
+  const { title, description, image: ogImage, imageAlt } = getArticleSeo(article);
+  const path = `/articles/${slug}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title,
+      description,
+      url: path,
+      type: 'article',
+      publishedTime: article.publishedAt,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: imageAlt }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [{ url: ogImage, alt: imageAlt }],
+    },
+  };
+}
+
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug).catch(() => null);
   if (!article) return notFound();
 
   const subjectSlugs = (article.subjects || []).map((s: any) => s.slug.current);
-  let related = await getRelatedArticles(subjectSlugs, article._id, 3).catch((): any[] => []);
-  if (related.length < 3) {
-    const latest = await getAllArticles().catch(() => []);
-    const seen = new Set([slug, ...related.map((r: any) => r.slug.current)]);
-    for (const candidate of latest) {
-      if (related.length >= 3) break;
-      if (!seen.has(candidate.slug.current)) {
-        related.push(candidate);
-        seen.add(candidate.slug.current);
-      }
-    }
-  }
+  const related = await getRelatedArticles(subjectSlugs, article._id, 3).catch((): any[] => []);
 
   const readMinutes = estimateReadingMinutes(article.body);
   const publishedLabel = article.publishedAt
@@ -52,9 +75,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   // heroImage is an optional wide-format override for the banner below --
   // most articles just reuse the (portrait) coverImage for both contexts.
   const heroImage = article.heroImage || article.coverImage;
+  const articleJsonLd = buildArticleJsonLd(article, slug);
 
   return (
     <div className="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleJsonLd) }}
+      />
       {/* Editorial Header */}
       <header className="mb-12 md:mb-16">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -168,17 +196,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         </div>
       </div>
 
-      {/* Related Articles Section */}
-      {related.length > 0 && (
-        <section className="mt-16 md:mt-24 border-t border-outline/20 pt-16">
-          <h2 className="font-headline-md text-headline-md text-primary mb-12">Further Journeys</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-gutter">
-            {related.map((relatedArticle: any) => (
-              <ArticleCard key={relatedArticle.slug.current} article={relatedArticle} />
-            ))}
-          </div>
-        </section>
-      )}
+      <RelatedReading articles={related} />
     </div>
   );
 }

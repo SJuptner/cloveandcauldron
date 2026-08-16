@@ -1,12 +1,17 @@
 import type { Metadata } from 'next';
 import { allFontVariables } from '@/lib/fonts';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { SITE_URL } from '@/lib/seo';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: 'Clove & Cauldron | Ancient Echoes, Modern Paths',
   description:
     'Exploring the mythic heritage of Anatolia and the Turkic spirits through symbol and word.',
+  alternates: {
+    canonical: '/',
+  },
 };
 
 // Runs before hydration so the page never flashes the wrong theme. Reads the

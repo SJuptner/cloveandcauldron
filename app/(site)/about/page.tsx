@@ -1,8 +1,22 @@
+import type { Metadata } from 'next';
 import { PortableText } from '@portabletext/react';
 import Logo from '@/components/Logo';
 import { getSiteSettings } from '@/lib/sanity.queries';
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'About | Clove & Cauldron',
+  description:
+    'Clove & Cauldron is an independent research project tracing the legends, folklore, and symbols of the Turkic worlds, from Central Asia to their living echoes in Anatolia today.',
+  alternates: { canonical: '/about' },
+  openGraph: {
+    title: 'About | Clove & Cauldron',
+    description:
+      'Clove & Cauldron is an independent research project tracing the legends, folklore, and symbols of the Turkic worlds, from Central Asia to their living echoes in Anatolia today.',
+    url: '/about',
+  },
+};
 
 export default async function AboutPage() {
   const settings = await getSiteSettings().catch(() => null);

@@ -1,9 +1,23 @@
+import type { Metadata } from 'next';
 import ArticleCard from '@/components/ArticleCard';
 import SubjectTags from '@/components/SubjectTags';
 import ArchiveSearch from '@/components/ArchiveSearch';
 import { getAllArticles, getAllSubjects } from '@/lib/sanity.queries';
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'The Embers | Clove & Cauldron',
+  description:
+    'Browse every article in The Embers, our digital hearth where old Turkic and Anatolian folklore meets the modern seeker.',
+  alternates: { canonical: '/embers' },
+  openGraph: {
+    title: 'The Embers | Clove & Cauldron',
+    description:
+      'Browse every article in The Embers, our digital hearth where old Turkic and Anatolian folklore meets the modern seeker.',
+    url: '/embers',
+  },
+};
 
 export default async function ArchivePage() {
   const [articles, subjects] = await Promise.all([

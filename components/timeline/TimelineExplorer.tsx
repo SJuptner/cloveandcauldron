@@ -148,6 +148,7 @@ export default function TimelineExplorer() {
   const sidebarListRef = useRef<HTMLDivElement>(null);
   const stageWrapRef = useRef<HTMLDivElement>(null);
   const centerSpacerRef = useRef<HTMLDivElement>(null);
+  const topSpacerRef = useRef<HTMLDivElement>(null);
 
   // Mutable interaction state that must NOT trigger a React re-render on every
   // drag/wheel frame -- the prototype used bare module-level `let` for the
@@ -539,24 +540,38 @@ export default function TimelineExplorer() {
       clampPan();
       render();
 
-      const { y, h } = ribbonYH(e);
       const stageWrap = stageWrapRef.current;
-      if (stageWrap) {
-        // An era near the bottom of the last lane has nowhere to scroll TO --
-        // scrollTop maxes out at (scrollHeight - clientHeight), so centering
-        // it would need to scroll past the natural end of the content. Grow a
-        // bottom spacer (half a viewport tall, more than enough for any era)
+      // Measure the just-rendered ribbon's REAL on-screen position rather than
+      // computing it from SVG viewBox coordinates -- the viewBox is always
+      // 1400 units wide, but the rendered SVG almost never is exactly 1400px
+      // (sidebar width, screen size, zoom level all vary it), so treating
+      // viewBox y-units as CSS pixels for scrollTop drifted further off the
+      // more the two diverged. Reading getBoundingClientRect() after render()
+      // sidesteps unit conversion entirely -- it's the browser's own layout
+      // truth, correct regardless of scale.
+      const activeEl = erasGroupRef.current?.querySelector(`.${styles.eraRibbonActive}`);
+      if (stageWrap && activeEl) {
+        // An era near the very top or bottom of the whole timeline has
+        // nowhere to scroll TO in that direction -- scrollTop is clamped to
+        // [0, scrollHeight-clientHeight] by the browser, so centering it
+        // would need to scroll past an edge that doesn't exist. Grow spacers
+        // on BOTH ends (half a viewport each, more than enough for any era)
         // only while something's selected, so centering always has room to
         // work but browsing normally doesn't carry a permanent empty gap.
-        if (centerSpacerRef.current) centerSpacerRef.current.style.height = `${stageWrap.clientHeight / 2}px`;
-        const targetScroll = y + h / 2 - stageWrap.clientHeight / 2;
-        stageWrap.scrollTop = Math.max(0, targetScroll);
+        const halfViewport = `${stageWrap.clientHeight / 2}px`;
+        if (topSpacerRef.current) topSpacerRef.current.style.height = halfViewport;
+        if (centerSpacerRef.current) centerSpacerRef.current.style.height = halfViewport;
+        const stageRect = stageWrap.getBoundingClientRect();
+        const elRect = activeEl.getBoundingClientRect();
+        const delta = elRect.top + elRect.height / 2 - (stageRect.top + stageRect.height / 2);
+        stageWrap.scrollTop = Math.max(0, stageWrap.scrollTop + delta);
       }
       highlightSidebarItem(e);
     }
     function clearSelection() {
       activeEraRef.current = null;
       render();
+      if (topSpacerRef.current) topSpacerRef.current.style.height = '0px';
       if (centerSpacerRef.current) centerSpacerRef.current.style.height = '0px';
       sidebarListRef.current?.querySelectorAll(`.${styles.sidebarItemActive}`).forEach((n) => n.classList.remove(styles.sidebarItemActive));
     }
@@ -793,7 +808,7 @@ export default function TimelineExplorer() {
           <div ref={sidebarListRef} className={styles.sidebarList} />
         </div>
         <div className={styles.stageWrap} ref={stageWrapRef}>
-          <div className="parchment-grain" />
+          <div ref={topSpacerRef} style={{ height: 0 }} />
           {/* Zero-height sticky anchor: stays pinned to the top of the visible
               scroll viewport (both the vertical scroll AND the drag-to-pan
               handler move stageWrap.scrollTop) without pushing the SVG down,
@@ -813,19 +828,31 @@ export default function TimelineExplorer() {
               ›
             </button>
           </div>
-          <svg
-            ref={svgRef}
-            className={styles.stage}
-            width="100%"
-            viewBox={`0 0 ${VB_W} ${VB_H}`}
-            style={{ touchAction: 'none', paddingLeft: sidebarCollapsed ? 28 : 0 }}
-          >
-            <defs ref={rumiDefsRef}></defs>
-            <g ref={lanesGroupRef}></g>
-            <g ref={labelsFixedRef}></g>
-            <g ref={erasGroupRef}></g>
-            <g ref={eventsGroupRef}></g>
-          </svg>
+          {/* The grain lives here, not as a direct absolute child of stageWrap:
+              stageWrap is a scroll container, so inset:0 there sizes the grain
+              to stageWrap's fixed, unscrolled viewport height (its "padding
+              box"), not the full scrollable content height -- past that point
+              (all 5 lanes stacked is much taller than one screenful) there's
+              simply no more grain div left to render, hence the hard seam.
+              This wrapper is a normal in-flow block that auto-sizes to the
+              SVG's actual full height, so inset:0 here covers everything, and
+              it scrolls together with the SVG since neither escapes the flow. */}
+          <div className={styles.stageContent}>
+            <div className="parchment-grain" />
+            <svg
+              ref={svgRef}
+              className={styles.stage}
+              width="100%"
+              viewBox={`0 0 ${VB_W} ${VB_H}`}
+              style={{ touchAction: 'none', paddingLeft: sidebarCollapsed ? 28 : 0 }}
+            >
+              <defs ref={rumiDefsRef}></defs>
+              <g ref={lanesGroupRef}></g>
+              <g ref={labelsFixedRef}></g>
+              <g ref={erasGroupRef}></g>
+              <g ref={eventsGroupRef}></g>
+            </svg>
+          </div>
           <div ref={centerSpacerRef} style={{ height: 0 }} />
           <div ref={tooltipRef} className={`${styles.tooltip} font-body-md`} />
         </div>

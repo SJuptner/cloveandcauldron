@@ -2,6 +2,8 @@ import CookiePreferencesButton from '@/components/CookiePreferencesButton';
 
 export const metadata = {
   title: 'Privacy Scroll | Clove & Cauldron',
+  description: 'Privacy policy for Clove & Cauldron.',
+  alternates: { canonical: '/privacy' },
 };
 
 export default function PrivacyPage() {

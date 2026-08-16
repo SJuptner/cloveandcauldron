@@ -1,19 +1,43 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import ArticleCard from '@/components/ArticleCard';
 import Logo from '@/components/Logo';
 import NewsletterForm from '@/components/NewsletterForm';
 import { getSiteSettings, getRecentArticles } from '@/lib/sanity.queries';
+import { buildSiteJsonLd, serializeJsonLd } from '@/lib/seo';
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'Clove & Cauldron | Turkic & Anatolian Myth, Folklore, and Symbol',
+  description:
+    'A digital hearth exploring the mythic heritage of Anatolia and the Turkic spirits — original research, folklore, and symbolism behind the videos.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'Clove & Cauldron | Turkic & Anatolian Myth, Folklore, and Symbol',
+    description:
+      'A digital hearth exploring the mythic heritage of Anatolia and the Turkic spirits — original research, folklore, and symbolism behind the videos.',
+    url: '/',
+  },
+};
 
 export default async function HomePage() {
   const [settings, articles] = await Promise.all([
     getSiteSettings().catch(() => null),
     getRecentArticles(3).catch(() => []),
   ]);
+  const { website, organization } = buildSiteJsonLd();
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(website) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(organization) }}
+      />
       {/* Hero Section */}
       <main className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto z-10">
         <div className="flex flex-col items-center text-center">

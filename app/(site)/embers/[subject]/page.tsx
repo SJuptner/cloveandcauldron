@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import ArticleCard from '@/components/ArticleCard';
 import SubjectTags from '@/components/SubjectTags';
 import { getArticlesBySubject, getAllSubjects } from '@/lib/sanity.queries';
@@ -8,6 +9,31 @@ export const revalidate = 60;
 export async function generateStaticParams() {
   const subjects = await getAllSubjects().catch(() => []);
   return subjects.map((s: any) => ({ subject: s.slug.current }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ subject: string }>;
+}): Promise<Metadata> {
+  const { subject } = await params;
+  const subjects = await getAllSubjects().catch(() => []);
+  const currentSubject = subjects.find((s: any) => s.slug.current === subject);
+  if (!currentSubject) return {};
+
+  const title = `${currentSubject.metaTitle || currentSubject.name} | The Embers`;
+  const description =
+    currentSubject.metaDescription ||
+    currentSubject.description ||
+    `Articles exploring ${currentSubject.name} on Clove & Cauldron.`;
+  const path = `/embers/${subject}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: { title, description, url: path },
+  };
 }
 
 export default async function SubjectArchivePage({

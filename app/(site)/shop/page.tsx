@@ -1,8 +1,22 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import ShopGrid from '@/components/ShopGrid';
 import { getShopProducts, getSiteSettings } from '@/lib/sanity.queries';
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "The Artisan's Exchange | Clove & Cauldron",
+  description:
+    'Curated artifacts that bridge the boundary between the ancient spirits and the modern touch — each piece a myth whispered into reality.',
+  alternates: { canonical: '/shop' },
+  openGraph: {
+    title: "The Artisan's Exchange | Clove & Cauldron",
+    description:
+      'Curated artifacts that bridge the boundary between the ancient spirits and the modern touch — each piece a myth whispered into reality.',
+    url: '/shop',
+  },
+};
 
 export default async function ShopPage() {
   const [products, settings] = await Promise.all([

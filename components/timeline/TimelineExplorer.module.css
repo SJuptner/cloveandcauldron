@@ -186,6 +186,12 @@
 .stageWrap > *:not(:global(.parchment-grain)):not(.sidebarExpandTabAnchor):not(.tooltip) {
   position: relative;
 }
+.stageContent {
+  position: relative;
+}
+.stageContent > *:not(:global(.parchment-grain)) {
+  position: relative;
+}
 
 .sidebar {
   width: 260px;

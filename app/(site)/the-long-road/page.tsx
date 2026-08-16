@@ -3,6 +3,7 @@ import TimelineExplorer from '@/components/timeline/TimelineExplorer';
 export const metadata = {
   title: 'The Long Road | Clove & Cauldron',
   description: 'An interactive timeline of Turkic history, 3rd c. BCE to today, across five regional lanes.',
+  alternates: { canonical: '/the-long-road' },
 };
 
 export default function TheLongRoadPage() {

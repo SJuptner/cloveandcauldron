@@ -8,6 +8,7 @@ export default defineType({
   groups: [
     { name: 'content', title: 'Content', default: true },
     { name: 'meta', title: 'Meta & Tags' },
+    { name: 'seo', title: 'SEO' },
   ],
   fields: [
     defineField({
@@ -106,7 +107,17 @@ export default defineType({
           title: 'Photo',
           options: { hotspot: true },
           fields: [
-            { name: 'alt', title: 'Alt text', type: 'string' },
+            {
+              name: 'alt',
+              title: 'Alt text',
+              type: 'string',
+              description:
+                'Describes the image for screen readers and search engines. Left blank, this image silently renders with no alt text on the live site.',
+              validation: (Rule) =>
+                Rule.warning(
+                  'Add alt text so screen readers and search engines can describe this image — leaving it blank makes the photo invisible to both.'
+                ),
+            },
             { name: 'caption', title: 'Caption', type: 'string' },
             {
               name: 'layout',
@@ -177,6 +188,33 @@ export default defineType({
       type: 'datetime',
       group: 'meta',
       initialValue: () => new Date().toISOString(),
+    }),
+    defineField({
+      name: 'metaTitle',
+      title: 'Meta title (optional override)',
+      type: 'string',
+      group: 'seo',
+      description: 'Overrides the page <title> and og:title. Leave empty to use the article Title.',
+    }),
+    defineField({
+      name: 'metaDescription',
+      title: 'Meta description (optional override)',
+      type: 'text',
+      rows: 3,
+      group: 'seo',
+      description:
+        'Overrides the meta description and og:description. Aim for ~155 characters so it doesn’t get truncated in search results. Leave empty to use the Dek, or an excerpt of the body if there’s no Dek.',
+      validation: (Rule) => Rule.max(160).warning('Longer than ~160 characters may get truncated in search results.'),
+    }),
+    defineField({
+      name: 'ogImage',
+      title: 'Social share image (optional override)',
+      type: 'image',
+      group: 'seo',
+      description:
+        'Used for social/link previews (og:image). Leave empty to use the Cover Image.',
+      options: { hotspot: true },
+      fields: [{ name: 'alt', title: 'Alt text', type: 'string' }],
     }),
   ],
   preview: {
