@@ -18,7 +18,7 @@ export default function RelatedReading({ articles }: RelatedReadingProps) {
   return (
     <section className="mt-16 md:mt-24 border-t border-outline/20 pt-16">
       <h2 className="font-headline-md text-headline-md text-primary mb-12">Further Journeys</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-gutter">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-gutter items-start">
         {articles.map((article) => (
           <ArticleCard key={article.slug.current} article={article} />
         ))}

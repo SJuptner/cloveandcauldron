@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -7,10 +6,11 @@ import {
   getAllArticleSlugs,
   getRelatedArticles,
 } from '@/lib/sanity.queries';
-import { resolveImageSrc } from '@/lib/sanity.image';
+import { resolveImageSrc, getImageDimensions } from '@/lib/sanity.image';
 import { estimateReadingMinutes } from '@/lib/readingTime';
 import { getArticleSeo, buildArticleJsonLd, serializeJsonLd } from '@/lib/seo';
 import ArticleBody from '@/components/ArticleBody';
+import ClickableImage from '@/components/ClickableImage';
 import RelatedReading from '@/components/RelatedReading';
 
 export const revalidate = 60;
@@ -78,6 +78,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   // heroImage is an optional wide-format override for the banner below --
   // most articles just reuse the (portrait) coverImage for both contexts.
   const heroImage = article.heroImage || article.coverImage;
+  const heroImageDims = getImageDimensions(heroImage);
   const articleJsonLd = buildArticleJsonLd(article, slug);
 
   return (
@@ -120,16 +121,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </div>
         </div>
 
-        <div className="w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] overflow-hidden ink-border bg-surface-container mb-4">
-          <Image
-            src={resolveImageSrc(heroImage, 1600, 686)}
-            alt={heroImage?.alt || article.title}
-            width={1600}
-            height={686}
-            className="w-full h-full object-cover"
-            priority
-          />
-        </div>
+        <ClickableImage
+          src={resolveImageSrc(heroImage, 1600)}
+          fullSrc={resolveImageSrc(heroImage, 2600)}
+          alt={heroImage?.alt || article.title}
+          width={heroImageDims.width}
+          height={heroImageDims.height}
+          className="ink-border bg-surface-container mb-4"
+          priority
+        />
         {heroImage?.caption && (
           <p className="text-center font-label-sm text-label-sm italic text-on-surface-variant/70">
             {heroImage.caption}

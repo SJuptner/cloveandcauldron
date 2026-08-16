@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { resolveImageSrc } from '@/lib/sanity.image';
+import { resolveImageSrc, getImageDimensions } from '@/lib/sanity.image';
 
 interface MerchCardProps {
   product: {
@@ -16,15 +16,17 @@ interface MerchCardProps {
 }
 
 export default function MerchCard({ product, compact = false, className }: MerchCardProps) {
+  const dims = getImageDimensions(product.image);
+
   if (compact) {
     const inner = (
-      <div className="aspect-square bg-surface ink-border overflow-hidden group">
+      <div className="bg-surface ink-border overflow-hidden group">
         <Image
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-auto group-hover:scale-110 transition-transform duration-500"
           src={resolveImageSrc(product.image, 500)}
           alt={product.name}
-          width={500}
-          height={500}
+          width={dims.width}
+          height={dims.height}
         />
       </div>
     );
@@ -39,13 +41,13 @@ export default function MerchCard({ product, compact = false, className }: Merch
 
   const inner = (
     <>
-      <div className="relative overflow-hidden aspect-[4/5] bg-surface-container mb-6 ink-border transition-all duration-500 group-hover:woodblock-shadow">
+      <div className="relative overflow-hidden bg-surface-container mb-6 ink-border transition-all duration-500 group-hover:woodblock-shadow">
         <Image
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-auto transition-transform duration-700 group-hover:scale-105"
           src={resolveImageSrc(product.image, 700)}
           alt={product.name}
-          width={700}
-          height={875}
+          width={dims.width}
+          height={dims.height}
         />
         <span className="absolute bottom-4 right-4 w-12 h-12 bg-primary text-on-primary flex items-center justify-center ink-border opacity-100 translate-y-0 md:opacity-0 md:translate-y-4 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300">
           <span className="material-symbols-outlined" aria-hidden="true">shopping_bag</span>

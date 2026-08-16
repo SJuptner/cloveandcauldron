@@ -69,7 +69,7 @@ export default async function SubjectArchivePage({
       </div>
 
       {articles.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter items-start">
           {articles.map((article: any) => (
             <article key={article.slug.current} className="group">
               <ArticleCard article={article} />

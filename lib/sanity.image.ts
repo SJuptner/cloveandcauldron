@@ -31,3 +31,29 @@ export function resolveImageSrc(image: any, width = 1200, height?: number): stri
   if (typeof image.src === 'string') return image.src;
   return PLACEHOLDER_IMAGE;
 }
+
+// Sanity image asset ids are deterministically named
+// `image-<hash>-<width>x<height>-<format>` at upload time -- the dimensions
+// are baked into the reference string itself, no need to dereference the
+// asset document or extend any GROQ projection to get at them.
+const ASSET_REF_DIMENSIONS = /-(\d+)x(\d+)-/;
+
+/**
+ * Real pixel dimensions of a Sanity image, parsed straight off its asset
+ * reference. next/image requires width+height up front for any non-`fill`
+ * remote image; using the asset's real aspect ratio here (instead of a
+ * guessed one) is what lets a fixed-width, auto-height image render at its
+ * true proportions with no cropping.
+ *
+ * Demo/placeholder images (lib/demoContent.ts) have no `asset` ref -- they
+ * fall back to a plain 4:3 box.
+ */
+export function getImageDimensions(
+  image: any,
+  fallback: { width: number; height: number } = { width: 4, height: 3 }
+): { width: number; height: number } {
+  const ref = image?.asset?._ref || image?.asset?._id;
+  const match = typeof ref === 'string' ? ref.match(ASSET_REF_DIMENSIONS) : null;
+  if (match) return { width: Number(match[1]), height: Number(match[2]) };
+  return fallback;
+}

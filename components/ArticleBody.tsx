@@ -1,7 +1,7 @@
 import { Children, Fragment, ReactNode } from 'react';
 import { PortableText, PortableTextComponents } from '@portabletext/react';
-import Image from 'next/image';
-import { resolveImageSrc } from '@/lib/sanity.image';
+import { resolveImageSrc, getImageDimensions } from '@/lib/sanity.image';
+import ClickableImage from '@/components/ClickableImage';
 
 const URL_REGEX = /(https?:\/\/[^\s]+)/g;
 // Trailing characters that usually belong to the surrounding sentence, not the URL
@@ -122,16 +122,17 @@ function getComponents(dropCapKey: string | undefined): PortableTextComponents {
     types: {
       image: ({ value }) => {
         const layout = value.layout || 'inline';
+        const { width, height } = getImageDimensions(value);
         return (
           <figure className={`my-10 ${layout === 'wide' ? '-mx-8 md:-mx-16' : ''}`}>
-            <div className="relative aspect-[3/2] ink-border overflow-hidden">
-              <Image
-                src={resolveImageSrc(value, 1400, 933)}
-                alt={value.alt || ''}
-                fill
-                className="object-cover"
-              />
-            </div>
+            <ClickableImage
+              src={resolveImageSrc(value, 1400)}
+              fullSrc={resolveImageSrc(value, 2400)}
+              alt={value.alt || ''}
+              width={width}
+              height={height}
+              className="ink-border overflow-hidden"
+            />
             {value.caption && (
               <figcaption className="font-label-sm text-label-sm text-on-surface-variant text-center mt-3 italic">
                 {value.caption}
@@ -142,18 +143,21 @@ function getComponents(dropCapKey: string | undefined): PortableTextComponents {
       },
       imagePair: ({ value }) => (
         <div className="grid grid-cols-2 gap-gutter my-12">
-          {value.images.map((image: any) => (
-            <div key={image._key} className="aspect-square bg-surface-container-high ink-border overflow-hidden">
-              <div className="relative w-full h-full">
-                <Image
-                  src={resolveImageSrc(image, 700, 700)}
-                  alt={image.alt || ''}
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-            </div>
-          ))}
+          {value.images.map((image: any) => {
+            const { width, height } = getImageDimensions(image);
+            return (
+              <ClickableImage
+                key={image._key}
+                src={resolveImageSrc(image, 700)}
+                fullSrc={resolveImageSrc(image, 1600)}
+                alt={image.alt || ''}
+                width={width}
+                height={height}
+                className="bg-surface-container-high ink-border overflow-hidden"
+                imgClassName="hover:scale-105 transition-transform duration-700"
+              />
+            );
+          })}
         </div>
       ),
       symbolCallout: ({ value }) => (

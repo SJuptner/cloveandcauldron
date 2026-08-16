@@ -41,7 +41,7 @@ export default function ShopGrid({ products }: { products: Product[] }) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-16 items-start">
         {filtered.map((product, i) => (
           <MerchCard
             key={product.name}
