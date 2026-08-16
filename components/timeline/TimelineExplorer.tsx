@@ -808,7 +808,15 @@ export default function TimelineExplorer() {
           <div ref={sidebarListRef} className={styles.sidebarList} />
         </div>
         <div className={styles.stageWrap} ref={stageWrapRef}>
-          <div ref={topSpacerRef} style={{ height: 0 }} />
+          {/* Grained directly (not just relying on stageContent's grain) --
+              this spacer grows to half a viewport whenever an era is
+              selected (see centerActiveEra), and it's a sibling of
+              stageContent, not a descendant, so stageContent's own grain
+              never reaches it. Without its own grain the expanded padding
+              renders as flat --bg instead of the page's textured look. */}
+          <div ref={topSpacerRef} style={{ height: 0 }}>
+            <div className="parchment-grain" />
+          </div>
           {/* Zero-height sticky anchor: stays pinned to the top of the visible
               scroll viewport (both the vertical scroll AND the drag-to-pan
               handler move stageWrap.scrollTop) without pushing the SVG down,
@@ -853,7 +861,11 @@ export default function TimelineExplorer() {
               <g ref={eventsGroupRef}></g>
             </svg>
           </div>
-          <div ref={centerSpacerRef} style={{ height: 0 }} />
+          {/* Same fix as topSpacerRef above -- own grain, since this is also
+              a stageContent sibling that grows independently. */}
+          <div ref={centerSpacerRef} style={{ height: 0 }}>
+            <div className="parchment-grain" />
+          </div>
           <div ref={tooltipRef} className={`${styles.tooltip} font-body-md`} />
         </div>
       </div>
